@@ -1,10 +1,13 @@
 kind: Deployment
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
   name: nfs-client-provisioner
   namespace: nfs-storage
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
   strategy:
     type: RollingUpdate
   template:
@@ -23,9 +26,9 @@ spec:
             - name: PROVISIONER_NAME
               value: nfs-provisioner/nfs-ssd1
             - name: NFS_SERVER
-              value: 192.168.1.60
+              value: 192.168.24.20
             - name: NFS_PATH
-              value: /data/kubernetes-storage
+              value: /mnt/hd1
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -42,5 +45,5 @@ spec:
       volumes:
         - name: nfs-client-root
           nfs:
-            server: 192.168.1.60
-            path: /data/kubernetes-storage
+            server: 192.168.24.20
+            path: /mnt/hd1
